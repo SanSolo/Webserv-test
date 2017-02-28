@@ -12,18 +12,74 @@ router.get('/', function(req, res, next) {
    });
 });
 
-/* POST new user */
-router.post('/', function(req, res, next) {
-  // Create a new document from the JSON in the request body
-  const newUser = new User(req.body);
-  // Save that document
-  newUser.save(function(err, savedUser) {
+router.post('/', utils.requireJson, function(req, res, next) {
+  new User(req.body).save(function(err, savedUser) {
+    if (err) {
+      console.log(err);
+      return next(err);
+    }
+
+    debug(`Created user "${savedUser.firstName}"`);
+
+    res
+      .status(201)
+      .set('Location', `${config.baseUrl}/users/${savedUser._id}`)
+      .send(savedUser);
+  });
+});
+
+
+router.patch('/:id', utils.requireJson, loadUserFromParamsMiddleware, function(req, res, next) {
+
+  // Update properties present in the request body
+  if (req.body.firstName !== undefined) {
+    req.user.firstName = req.body.firstName;
+  }
+  if (req.body.lastName !== undefined) {
+    req.user.lastName = req.body.lastName;
+  }
+  if (req.body.role !== undefined) {
+    req.user.role = req.body.role;
+  }
+
+  req.person.save(function(err, savedUser) {
     if (err) {
       return next(err);
     }
-    // Send the saved document in the response
+
+    debug(`Updated user "${savedUser.firstName}"`);
     res.send(savedUser);
   });
 });
+
+router.delete('/:id', loadUserFromParamsMiddleware, function(req, res, next) {
+    req.user.remove(function(err) {
+      if (err) {
+        return next(err);
+      }
+      debug(`Deleted user "${req.user.firstNamename}"`);
+      res.sendStatus(204);
+    });
+  });
+});
+
+function loadUserFromParamsMiddleware(req, res, next) {
+
+  const userId = req.params.id;
+  if (!ObjectId.isValid(userId)) {
+    return userNotFound(res, userId);
+  }
+
+  User.findById(req.params.id, function(err, user) {
+    if (err) {
+      return next(err);
+    } else if (!user) {
+      return userNotFound(res, userId);
+    }
+
+    req.user = user;
+    next();
+  });
+}
 
 module.exports = router;
