@@ -2,13 +2,13 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 // Define the schema for users
 const userSchema = new Schema({
-  firstname: {
+  firstName: {
     type: String,
     required: true,
     minlength: 2, // longueur min
     maxlength: 20 // longueur max
   },
-  lastname: {
+  lastName: {
     type: String,
     required: true,
     minlength: 2, // longueur min
@@ -22,7 +22,7 @@ const userSchema = new Schema({
   createdAt: { type: Date, default: Date.now  } //créé la date et lui met la date du moment de la création
 });
 
-userSchema.index({ firstname:1, lastname:1}, {unique:true});
+userSchema.index({ firstName:1, lastName:1}, {unique:true});
 
 
 // Create the model from the schema and export it
