@@ -28,8 +28,7 @@ router.post('/', function(req, res, next) {
   });
 });
 
-
-/*router.patch('/:id', utils.requireJson, loadUserFromParamsMiddleware, function(req, res, next) {
+router.patch('/:id', loadUserFromParamsMiddleware, function(req, res, next) {
 
   // Update properties present in the request body
   if (req.body.firstName !== undefined) {
@@ -42,16 +41,16 @@ router.post('/', function(req, res, next) {
     req.user.role = req.body.role;
   }
 
-  req.person.save(function(err, savedUser) {
+  req.user.save(function(err, savedUser) {
     if (err) {
       return next(err);
     }
 
-    debug(`Updated user "${savedUser.firstName}"`);
+  //  debug(`Updated person "${savedUser.lastName}"`);
     res.send(savedUser);
   });
 });
-
+/*
 router.delete('/:id', loadUserFromParamsMiddleware, function(req, res, next) {
     req.user.remove(function(err) {
       if (err) {
@@ -60,7 +59,7 @@ router.delete('/:id', loadUserFromParamsMiddleware, function(req, res, next) {
       debug(`Deleted user "${req.user.firstName}"`);
       res.sendStatus(204);
     });
-  });
+  });*/
 
 function loadUserFromParamsMiddleware(req, res, next) {
 
@@ -79,6 +78,10 @@ function loadUserFromParamsMiddleware(req, res, next) {
     req.user = user;
     next();
   });
-}*/
+}
+
+function personNotFound(res, personId) {
+  return res.status(404).type('text').send(`No person found with ID ${personId}`);
+}
 
 module.exports = router;
