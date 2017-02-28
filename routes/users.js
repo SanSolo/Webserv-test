@@ -15,6 +15,7 @@ router.get('/', function(req, res, next) {
 router.post('/', utils.requireJson, function(req, res, next) {
   new User(req.body).save(function(err, savedUser) {
     if (err) {
+      console.log(err);
       return next(err);
     }
 
