@@ -7,6 +7,7 @@ var bodyParser = require('body-parser');
 
 const mongoose = require('mongoose');
 mongoose.Promise = Promise;
+
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/my-app');
 
 var index = require('./routes/index');
