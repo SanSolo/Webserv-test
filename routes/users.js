@@ -14,6 +14,11 @@ router.get('/', function(req, res, next) {
    });
 });
 
+/* GET specific User */
+router.get('/:id', loadUserFromParamsMiddleware, function(req, res, next){
+  res.send(req.user);
+});
+
 router.post('/', function(req, res, next) {
   console.log(req.body);
   new User(req.body).save(function(err, savedUser) {
@@ -27,7 +32,6 @@ router.post('/', function(req, res, next) {
     res.send(savedUser);
   });
 });
-
 router.patch('/:id', loadUserFromParamsMiddleware, function(req, res, next) {
 
   // Update properties present in the request body
@@ -45,18 +49,30 @@ router.patch('/:id', loadUserFromParamsMiddleware, function(req, res, next) {
     if (err) {
       return next(err);
     }
-
-  //  debug(`Updated person "${savedUser.lastName}"`);
     res.send(savedUser);
   });
 });
-/*
-router.delete('/:id', loadUserFromParamsMiddleware, function(req, res, next) {
+router.put('/:id', loadUserFromParamsMiddleware, function(req, res, next) {
+
+  // Update all properties (regardless of whether they are in the request body or not)
+  req.user.firstName = req.body.firstName;
+  req.user.lastName = req.body.lastName;
+  req.user.role = req.body.role;
+
+  req.user.save(function(err, savedUser) {
+    if (err) {
+      return next(err);
+    }
+    res.send(savedUser);
+  });
+});
+
+/*router.delete('/:id', loadUserFromParamsMiddleware, function(req, res, next) {
     req.user.remove(function(err) {
       if (err) {
         return next(err);
       }
-      debug(`Deleted user "${req.user.firstName}"`);
+
       res.sendStatus(204);
     });
   });*/
@@ -80,8 +96,10 @@ function loadUserFromParamsMiddleware(req, res, next) {
   });
 }
 
-function personNotFound(res, personId) {
-  return res.status(404).type('text').send(`No person found with ID ${personId}`);
+function userNotFound(res, userId) {
+  return res.status(404).type('text').send(`No user found with ID ${userId}`);
 }
+
+
 
 module.exports = router;
