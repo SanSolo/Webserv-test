@@ -40,6 +40,34 @@ app.use(function(req, res, next) {
   next(err);
 });
 
+// API error handler (responds with JSON)
+app.use('/', function(err, req, res, next) {
+
+  // Log the error on stderr
+  console.warn(err);
+
+  // Respond with 422 Unprocessable Entity if it's a Mongoose validation error
+  if (err.name == 'ValidationError' && !err.status) {
+    err.status = 422;
+  }
+
+  // Set the response status code
+  res.status(err.status || 500);
+
+  // Send the error message in the response
+  const response = {
+    message: err.message
+  };
+
+  // If it's a validation error, also send the errors details from Mongoose
+  if (err.status == 422) {
+    response.errors = err.errors;
+  }
+
+  // Send the error response
+  res.send(response);
+});
+
 // error handler
 app.use(function(err, req, res, next) {
   // set locals, only providing error in development

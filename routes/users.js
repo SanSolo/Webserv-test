@@ -14,6 +14,11 @@ router.get('/', function(req, res, next) {
    });
 });
 
+/* GET specific User */
+router.get('/:id', loadUserFromParamsMiddleware, function(req, res, next){
+  res.send(req.user);
+});
+
 router.post('/', function(req, res, next) {
   console.log(req.body);
   new User(req.body).save(function(err, savedUser) {
@@ -27,9 +32,7 @@ router.post('/', function(req, res, next) {
     res.send(savedUser);
   });
 });
-
-
-/*router.patch('/:id', utils.requireJson, loadUserFromParamsMiddleware, function(req, res, next) {
+router.patch('/:id', loadUserFromParamsMiddleware, function(req, res, next) {
 
   // Update properties present in the request body
   if (req.body.firstName !== undefined) {
@@ -42,25 +45,37 @@ router.post('/', function(req, res, next) {
     req.user.role = req.body.role;
   }
 
-  req.person.save(function(err, savedUser) {
+  req.user.save(function(err, savedUser) {
     if (err) {
       return next(err);
     }
+    res.send(savedUser);
+  });
+});
+router.put('/:id', loadUserFromParamsMiddleware, function(req, res, next) {
 
-    debug(`Updated user "${savedUser.firstName}"`);
+  // Update all properties (regardless of whether they are in the request body or not)
+  req.user.firstName = req.body.firstName;
+  req.user.lastName = req.body.lastName;
+  req.user.role = req.body.role;
+
+  req.user.save(function(err, savedUser) {
+    if (err) {
+      return next(err);
+    }
     res.send(savedUser);
   });
 });
 
-router.delete('/:id', loadUserFromParamsMiddleware, function(req, res, next) {
+/*router.delete('/:id', loadUserFromParamsMiddleware, function(req, res, next) {
     req.user.remove(function(err) {
       if (err) {
         return next(err);
       }
-      debug(`Deleted user "${req.user.firstName}"`);
+
       res.sendStatus(204);
     });
-  });
+  });*/
 
 function loadUserFromParamsMiddleware(req, res, next) {
 
@@ -79,6 +94,12 @@ function loadUserFromParamsMiddleware(req, res, next) {
     req.user = user;
     next();
   });
-}*/
+}
+
+function userNotFound(res, userId) {
+  return res.status(404).type('text').send(`No user found with ID ${userId}`);
+}
+
+
 
 module.exports = router;
