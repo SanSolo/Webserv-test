@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "nodemon",
+    "apidoc": "apidoc -i routes -o docs",
     "start": "node ./bin/www"
   },
   "dependencies": {
@@ -17,6 +18,7 @@
     "serve-favicon": "~2.3.2"
   },
   "devDependencies": {
+    "apidoc": "^0.17.5",
     "nodemon": "^1.11.0"
   }
 }
