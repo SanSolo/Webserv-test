@@ -114,7 +114,6 @@ router.get('/user/:id', loadIssuesFromUser, function(req, res, next){
  * @apiUse IssueInRequestBody
  * @apiUse IssueInResponseBody
  * @apiUse IssueValidationError
- * @apiSuccess (Response body) {String} id L'identifiant unique pour les problèmes est géré par le serveur
  *
  * @apiExample Example
  *     POST /issues HTTP/1.1
@@ -376,6 +375,7 @@ module.exports = router;
 
 /**
  * @apiDefine IssueInResponseBody
+ * @apiSuccess (Response body) {String} [id] L'identifiant, qui est unique, définit un problème
  * @apiSuccess(Response body) {String} status Le statut du problème (ne peut être qu'une de ces quatres valeurs)
  * @apiSuccess (Response body) {String} [description] Une description est demandée pour décrire le problème
  * @apiSuccess(Response body) {String} [imageUrl] L'URL d'une photo du problème
