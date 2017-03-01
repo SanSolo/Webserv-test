@@ -3,6 +3,7 @@ var router = express.Router();
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 const User = require('../models/user');
+const Issue = require('../models/issue');
 
 
 /* GET specific User */
@@ -45,12 +46,56 @@ const User = require('../models/user');
  */
 
  /* GET users listing. */
- router.get('/', function(req, res, next) {
+ /*router.get('/', function(req, res, next) {
    User.find().sort('lastName').exec(function(err, users) {
       if (err) {
         return next(err);
       }
       res.send(users);
+    });
+ });*/
+ /* GET users listing. */
+ router.get('/', function(req, res, next) {
+   User.find().sort('lastName').exec(function(err, users) {
+      if (err) {
+        return next(err);
+      }
+      const usersIds = users.map(user => user._id);
+      Issue.aggregate([
+      {
+        $match: { // Select movies directed by the people we are interested in
+          createdBy: { $in: usersIds }
+        }
+      },
+      {
+        $group: { // Group the documents by director ID
+            _id: '$createdBy',
+            issuesCount: { // Count the number of movies for that ID
+              $sum: 1
+            }
+        }
+      }
+    ], function(err, results) {
+        if (err) {
+          return next(err);
+        }
+        // Convert the Person documents to JSON
+        const userJson = users.map(user => user.toJSON());
+        console.log(userJson);
+
+        // For each result...
+        results.forEach(function(result) {
+          // Get the director ID (that was used to $group)...
+          const resultId = result._id.toString();
+          // Find the corresponding person...
+          const correspondingPerson = userJson.find(user => user._id == resultId);
+          // And attach the new property
+          correspondingPerson.createdIssuesCount = result.issuesCount;
+        });
+        // Send the enriched response
+        res.send(userJson);
+      });
+
     });
  });
 
@@ -308,7 +353,7 @@ function userNotFound(res, userId) {
  * @apiSuccess (Response body) {String} firstName Le prénom de l'utilisateur
  * @apiSuccess (Response body) {String} lastName Le nom de famille de l'utilisateur
  * @apiSuccess (Response body) {String} role Définit le rôle de l'utilisateur
- * @apiSuccess (Response body) {String} createdAt La date de création du compte utilisateur (ajout automatique)
+ * @apiSuccess (Response body) {Date} createdAt La date de création du compte utilisateur (ajout automatique)
  */
 
 /**
