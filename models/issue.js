@@ -27,14 +27,22 @@ const issueSchema = new Schema({
     min: -180, // Minimum value
     max: 180 // Maximum value
   },
-  tags: [{ type: String, required: true, maxlength: 20 }],
-  //user: [{ type: String, required: true, maxlength: 20 }],
+  tags: [{ type: String, maxlength: 20 }],
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
   createdAt: {
     type: Date,
     default: Date.now
   },
   updatedAt: {
     type: Date,
+  },
+  updatedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
   }
 });
 // Create the model from the schema and export it
