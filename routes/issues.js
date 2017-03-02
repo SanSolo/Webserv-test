@@ -51,14 +51,21 @@ const User = require('../models/user');
  *     ]
  */
 
-router.get('/', function(req, res, next) {
-  Issue.find().sort('createdAt').exec(function(err, issues) { //lister par date de création de la plus vieille à la nouvelle  --> pour traiter les plus vieille au début
+ // GET /issues
+ router.get('/', function(req, res, next) {
+   let query = Issue.find();
+   // Filter by status
+   if (req.query.status && req.query.status != "") {
+     query = query.where('status').equals(req.query.status);
+   }
+   // Execute the query
+   query.exec(function(err, issues) {
      if (err) {
        return next(err);
      }
      res.send(issues);
    });
-});
+ });
 
 /**
  * @api {get} /issues/:id Renvoi un problème
