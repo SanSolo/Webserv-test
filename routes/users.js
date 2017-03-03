@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const mongoose = require('mongoose');
+const lodash = require('lodash');
 const ObjectId = mongoose.Types.ObjectId;
 const User = require('../models/user');
 const Issue = require('../models/issue');
@@ -97,9 +98,16 @@ const Issue = require('../models/issue');
 
     });
  });
-
+// à commenter
+/* Retourne les informations d'un User spécifique */
 router.get('/:id', loadUserFromParamsMiddleware, function(req, res, next){
   res.send(req.user);
+});
+
+//à commenter
+/* Retourne les Issues créées par un User spécifique */
+router.get('/:id/createdIssues', loadIssuesFromUser, function(req, res, next){
+  res.send(req.issues);
 });
 
  /**
@@ -187,18 +195,10 @@ router.post('/', function(req, res, next) {
  */
 
 router.patch('/:id', loadUserFromParamsMiddleware, function(req, res, next) {
-
-  // Update properties present in the request body
-  if (req.body.firstName !== undefined) {
-    req.user.firstName = req.body.firstName;
-  }
-  if (req.body.lastName !== undefined) {
-    req.user.lastName = req.body.lastName;
-  }
-  if (req.body.role !== undefined) {
-    req.user.role = req.body.role;
-  }
-
+  const whitelist = lodash.pick(req.body, ['firstName', 'lastName', 'role']); //crée une whitelist de propriétés pouvant être changées
+  // Remplace automatiquement les valeurs faisant partie de la whiteliste dans le nouvel User
+  lodash.assignIn(req.user, whitelist);
+  // Enregistrement du nouvel User
   req.user.save(function(err, savedUser) {
     if (err) {
       return next(err);
@@ -321,6 +321,22 @@ function loadUserFromParamsMiddleware(req, res, next) {
     }
 
     req.user = user;
+    next();
+  });
+}
+
+function loadIssuesFromUser (req, res, next) {
+  const userId = req.params.id;
+  if (!ObjectId.isValid(userId)) {
+    return userNotFound(res, userId);
+  }
+  Issue.find({'createdBy': userId}, function (err, issues){
+    if (err){
+      return next(err);
+    }else if (!issues) {
+      return issueNotFound(res, userId);
+    }
+    req.issues = issues;
     next();
   });
 }

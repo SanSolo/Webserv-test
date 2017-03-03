@@ -2,10 +2,15 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 // Define the schema for issues
 const issueSchema = new Schema({
+  title:{
+    type: String,
+    required: true,
+    maxlength: 20
+  },
   status:{
     type: String, // Type de validation
-    required: true, // Obligatoire
-    enum: ['new', 'inProgress', 'canceled', 'completed']//Statut du probleme. Est un seul de ces choix et évolue
+    enum: ['new', 'inProgress', 'canceled', 'completed'], //Statut du probleme. Est un seul de ces choix et évolue
+    default: "new"
   },
   description:{
     type: String, // Type de validation

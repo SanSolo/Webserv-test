@@ -119,12 +119,6 @@ router.get('/:id', loadIssueFromParamsMiddleware, function(req, res, next){
   res.send(req.issue);
 });
 
-//à commenter
-
-/* GET specific User */
-router.get('/user/:id', loadIssuesFromUser, function(req, res, next){
-  res.send(req.issues);
-});
 
 
 /**
@@ -354,21 +348,6 @@ function loadIssueFromParamsMiddleware(req, res, next) {
   });
 }
 
-function loadIssuesFromUser (req, res, next) {
-  const userId = req.params.id;
-  if (!ObjectId.isValid(userId)) {
-    return userNotFound(res, userId);
-  }
-  Issue.find({'createdBy': userId}, function (err, issues){
-    if (err){
-      return next(err);
-    }else if (!issues) {
-      return issueNotFound(res, userId);
-    }
-    req.issues = issues;
-    next();
-  });
-}
 
 /**
  * Renvoi l'erreur 404 Not Found et un message indicant que le problème avec l'ID spécifié n'a pas été trouvé
