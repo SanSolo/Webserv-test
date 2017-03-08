@@ -9,6 +9,8 @@ const User = require('../models/user');
 
 /* GET issues listing. */
 
+//test
+
 /**
  * @api {get} /issues Liste des problèmes
  * @apiName RetrieveIssues
