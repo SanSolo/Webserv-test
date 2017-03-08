@@ -261,7 +261,7 @@ router.put('/:id', loadUserFromParamsMiddleware, function(req, res, next) {
 /**
  * @api {delete} /users/:id Supprimer un utilisateur
  * @apiName DeleteUser
- * @apiGroup utilisateur
+ * @apiGroup Utilisateur
  * @apiVersion 1.0.0
  * @apiDescription Supprimer définitivement les données utilisateurs
  *

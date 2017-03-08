@@ -9,19 +9,18 @@ const User = require('../models/user');
 
 /* GET issues listing. */
 
-//test
 
 /**
  * @api {get} /issues Liste des problèmes
  * @apiName RetrieveIssues
  * @apiGroup Probleme
  * @apiVersion 1.0.0
- * @apiDescription Renvoi une liste de problème triée par date de création avec une pagination (de la plus vieille à la récente pour traiter les vieux problèmes en premier)
+ * @apiDescription Renvoi une liste de problèmes triée par date de création (de la plus vieille à la récente pour traiter les vieux problèmes en premier)
  *
  * @apiUse IssueInResponseBody
  *
  * @apiExample Example
- *     GET /issues?director=58b2926f5e1def0123e97bc0&page=2&pageSize=50 HTTP/1.1
+ *     GET /issues?user=58b2926f5e1def0123e97bc0&page=2&pageSize=50 HTTP/1.1
  *
  * @apiSuccessExample 200 OK
  *     HTTP/1.1 200 OK
@@ -30,14 +29,15 @@ const User = require('../models/user');
  *
  *     [
  *     {
+         "id": "58b2926f5e1def0789e5678",
 	       "status":"new",
-	       "description": "Dupo",
+	       "description": "essai 2",
 	       "imageUrl": "http://hvdseigneuries.com/wp-content/uploads/2009/02/trouverchatonrect-fb-56e15ff28c6fc.jpg",
-	       "latitude": "-10",
-	       "longitude": "10",
-	       "tags": "hiboux"
+	       "latitude": "-30",
+	       "longitude": "150",
+	       "tags": "chaton"
          "createdAt": "2017-02-28T14:39:14.588Z",
-         "createdBy": "users/58b573bbfb211b515d79b831"
+         "createdBy": "users/58b2926f5e1def0123e97bc0"
  *     },
          "id": "58b2926f5e1def0789e97281",
          "status":"new",
@@ -47,7 +47,7 @@ const User = require('../models/user');
          "longitude": "10",
          "tags": "hiboux"
          "createdAt": "2017-02-28T14:39:14.588Z",
-         "createdBy": "users/58b573bbfb211b515d79b831"
+         "createdBy": "users/58b2926f5e1def0123e97bc0"
         *     }
 
  *     ]
@@ -157,7 +157,7 @@ router.get('/:id', loadIssueFromParamsMiddleware, function(req, res, next){
          "__v": 0,
          "status": "new",
          "description": "Dupo",
-         "imageUrl": "citizen",
+         "imageUrl": "http://hvdseigneuries.com/wp-content/uploads/2009/02/trouverchatonrect-fb-56e15ff28c6fc.jpg",
          "latitude": -10,
          "longitude": 10,
          "_id": "58b58b9240e6e957f8f1a146",
@@ -386,7 +386,7 @@ module.exports = router;
  * @apiSuccess (Response body) {Number} latitude L'atitude de la location du problème
  * @apiSuccess (Response body) {Number} longitude La longitude de la location du problème
  * @apiSuccess (Response body) {String} [tags] Les mots clés, afin de trouver plus facilement le type de problème
- * @apiSuccess (Response body) {String} createdBy La personne qui a créé le problème
+ * @apiSuccess (Response body) {String} [createdBy] La personne qui a créé le problème
  * @apiSuccess (Response body) {Date} [createdAt] La date où le problème a été identifié
  * @apiSuccess (Response body) {Date} [updatedAt] La date de modification
  * @apiSuccess (Response body) {String} [updatedBy] La personne qui a modifié le statut
@@ -402,7 +402,7 @@ module.exports = router;
  *     HTTP/1.1 404 Not Found
  *     Content-Type: text/plain
  *
- *    Aucun problème trouvé avec l'ID: 58b2926f5e1def0123e97281
+ *    Aucun problème trouvé avec l ID: 58b2926f5e1def0123e97281
  */
 
 /**
