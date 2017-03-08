@@ -10,10 +10,10 @@ const Issue = require('../models/issue');
 /* GET specific User */
 /**
  * @api {get} /users/:id Liste des utilisateurs
- * @apiName RetrieveUsers
+ * @apiName RetrieveUsers1
  * @apiGroup Utilisateur
  * @apiVersion 1.0.0
- * @apiDescription Affiche la liste des personnes triées par nom de famille (par ordre alphabétique)
+ * @apiDescription Affiche la liste des utilisateurs triée par nom de famille (par ordre alphabétique)
  *
  * @apiUse UsersInResponseBody
 
@@ -39,7 +39,7 @@ const Issue = require('../models/issue');
  *        "id": "58b58b9240e6e957f8f1a146",
  *        "firstName": "Jean",
           "lastName": "Dujardin",
-*         "role": "manager",
+*         "role": "citizen",
 *         "createdAt": "2017-02-04T10:27:65.000Z"
  *       }
  *     ]
@@ -98,20 +98,91 @@ const Issue = require('../models/issue');
 
     });
  });
-// à commenter
+
+ /**
+  * @api {get} /users/:id Renvoi un utilisateur
+  * @apiName RetrieveUsers2
+  * @apiGroup Utilisateur
+  * @apiVersion 1.0.0
+  * @apiDescription Renvoi un utilisateur
+  *
+  * @apiUse UsersIdInUrlPath
+  * @apiUse UsersInResponseBody
+  * @apiUse UsersNotFoundError
+  *
+  * @apiExample Example
+  *     GET /users/58b2926f5e1def0123e97bc0 HTTP/1.1
+  *
+  * @apiSuccessExample 200 OK
+  *     HTTP/1.1 200 OK
+  *     Content-Type: application/json
+  *
+  *     {
+  *       "id": "58b2926f5e1def0123e97bc0",
+  *       "firstName": "John",
+  *       "lastName": "Doe",
+  *       "role": "citizen",
+  *       "createdAt": "2017-01-01T14:31:87.000Z"
+  *     }
+  */
+
 /* Retourne les informations d'un User spécifique */
 router.get('/:id', loadUserFromParamsMiddleware, function(req, res, next){
   res.send(req.user);
 });
 
-//à commenter
+/**
+ * @api {get} /users/:id Renvoi les problèmes créés par un utilisateur
+ * @apiName RetrieveIssuesUsers
+ * @apiGroup Utilisateur
+ * @apiVersion 1.0.0
+ * @apiDescription Renvoi les problèmes créés par un utilisateur
+ *
+ * @apiUse UsersIdInUrlPath
+ * @apiUse UsersInResponseBody
+ * @apiUse UsersNotFoundError
+ *
+ * @apiExample Example
+ *     GET /issues?user=58b2926f5e1def0123e97bc0&page=2&pageSize=50 HTTP/1.1
+ *
+ * @apiSuccessExample 200 OK
+ *     HTTP/1.1 200 OK
+ *     Content-Type: application/json
+ *
+ *     [
+ *     {
+         "id": "58b2926f5e1def0789e5678",
+         "status":"new",
+         "description": "essai 2",
+         "imageUrl": "http://hvdseigneuries.com/wp-content/uploads/2009/02/trouverchatonrect-fb-56e15ff28c6fc.jpg",
+         "latitude": "-30",
+         "longitude": "150",
+         "tags": "chaton"
+         "createdAt": "2017-02-28T14:39:14.588Z",
+         "createdBy": "users/58b2926f5e1def0123e97bc0"
+ *     },
+         "id": "58b2926f5e1def0789e97281",
+         "status":"new",
+         "description": "Dupo",
+         "imageUrl": "http://hvdseigneuries.com/wp-content/uploads/2009/02/trouverchatonrect-fb-56e15ff28c6fc.jpg",
+         "latitude": "-10",
+         "longitude": "10",
+         "tags": "hiboux"
+         "createdAt": "2017-02-28T14:39:14.588Z",
+         "createdBy": "users/58b2926f5e1def0123e97bc0"
+        *     }
+
+ *     ]
+ */
+
+
 /* Retourne les Issues créées par un User spécifique */
 router.get('/:id/createdIssues', loadIssuesFromUser, function(req, res, next){
   res.send(req.issues);
 });
 
  /**
-  * @api {post} /users/:id création de l'utilisateur
+  * @api {post} /users/:id Création de l'utilisateur
   * @apiName CreateUser
   * @apiGroup Utilisateur
   * @apiVersion 1.0.0
@@ -367,7 +438,7 @@ function userNotFound(res, userId) {
  * @apiSuccess (Response body) {String} firstName Le prénom de l'utilisateur
  * @apiSuccess (Response body) {String} lastName Le nom de famille de l'utilisateur
  * @apiSuccess (Response body) {String} role Définit le rôle de l'utilisateur
- * @apiSuccess (Response body) {Date} createdAt La date de création du compte utilisateur (ajout automatique)
+ * @apiSuccess (Response body) {Date} [createdAt] La date de création du compte utilisateur (ajout automatique)
 
 
  */
@@ -381,7 +452,7 @@ function userNotFound(res, userId) {
  *     HTTP/1.1 404 Not Found
  *     Content-Type: text/plain
  *
- *     Aucun utilisateur n'a l'identifiant : 58b2926f5e1def0123e97bc0
+ *     Aucun utilisateur n a l identifiant : 58b2926f5e1def0123e97bc0
  */
 
 /**
@@ -393,28 +464,25 @@ function userNotFound(res, userId) {
  *     HTTP/1.1 422 Unprocessable Entity
  *     Content-Type: application/json
  *
- *     {
- *       "message": "Person validation failed",
- *       "errors": {
- *         "gender": {
- *           "kind": "enum",
- *           "message": "`foo` is not a valid enum value for path `gender`.",
- *           "name": "ValidatorError",
- *           "path": "gender",
- *           "properties": {
- *             "enumValues": [
- *               "male",
- *               "female"
- *             ],
- *             "message": "`{VALUE}` is not a valid enum value for path `{PATH}`.",
- *             "path": "gender",
- *             "type": "enum",
- *             "value": "foo"
- *           },
- *           "value": "foo"
- *         }
- *       }
- *     }
+ {
+   "message": "User validation failed",
+   "errors": {
+     "firstName": {
+       "message": "Path `firstName` (`J`) is shorter than the minimum allowed length (2).",
+       "name": "ValidatorError",
+       "properties": {
+         "minlength": 2,
+         "type": "minlength",
+         "message": "Path `{PATH}` (`{VALUE}`) is shorter than the minimum allowed length (2).",
+         "path": "firstName",
+         "value": "J"
+       },
+       "kind": "minlength",
+       "path": "firstName",
+       "value": "J"
+     }
+   }
+ }
  */
 
 module.exports = router;

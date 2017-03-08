@@ -9,10 +9,10 @@ const User = require('../models/user');
 
 /* GET issues listing. */
 
-
+//début commentaire
 /**
  * @api {get} /issues Liste des problèmes
- * @apiName RetrieveIssues
+ * @apiName RetrieveIssues1
  * @apiGroup Probleme
  * @apiVersion 1.0.0
  * @apiDescription Renvoi une liste de problèmes triée par date de création (de la plus vieille à la récente pour traiter les vieux problèmes en premier)
@@ -30,12 +30,12 @@ const User = require('../models/user');
  *     [
  *     {
          "id": "58b2926f5e1def0789e5678",
-	       "status":"new",
-	       "description": "essai 2",
-	       "imageUrl": "http://hvdseigneuries.com/wp-content/uploads/2009/02/trouverchatonrect-fb-56e15ff28c6fc.jpg",
-	       "latitude": "-30",
-	       "longitude": "150",
-	       "tags": "chaton"
+         "status":"new",
+         "description": "essai 2",
+         "imageUrl": "http://hvdseigneuries.com/wp-content/uploads/2009/02/trouverchatonrect-fb-56e15ff28c6fc.jpg",
+         "latitude": "-30",
+         "longitude": "150",
+         "tags": "chaton"
          "createdAt": "2017-02-28T14:39:14.588Z",
          "createdBy": "users/58b2926f5e1def0123e97bc0"
  *     },
@@ -87,7 +87,7 @@ const User = require('../models/user');
 
 /**
  * @api {get} /issues/:id Renvoi un problème
- * @apiName RetrieveIssues
+ * @apiName RetrieveIssues2
  * @apiGroup Probleme
  * @apiVersion 1.0.0
  * @apiDescription Renvoi un problème
@@ -187,7 +187,7 @@ router.post('/', function(req, res, next) {
  * @apiName PartiallyUpdateIssues
  * @apiGroup Probleme
  * @apiVersion 1.0.0
- * @apiDescription Met à jour partiellement une donnée de problème (Seul les propriétés déjà existantes seront mise-à-jour)
+ * @apiDescription Mise à jour partielle d une donnée de problème (Seul les propriétés déjà existantes seront mise-à-jour)
  * Toutes les propriétés sont optionnelles
  *
  * @apiUse IssueIdInUrlPath
@@ -215,7 +215,7 @@ router.post('/', function(req, res, next) {
          "imageUrl": "citizen",
          "latitude": -10,
          "longitude": 10,
-         "_id": "58b58b9240e6e957f8f1a146",
+         "_id": "58b2926f5e1def0123e97281",
          "createdAt": "2017-02-28T14:39:14.588Z",
          "tags": [
            "hiboux"
@@ -271,7 +271,7 @@ router.patch('/:id', loadIssueFromParamsMiddleware, function(req, res, next) {
            "imageUrl": "http://i.skyrock.net/8034/92018034/pics/3238631469_1_3_x5cYkxeV.jpg",
            "latitude": 12,
            "longitude": 150,
-           "_id": "58b58b9240e6e957f8f1a146",
+           "_id": "58b2926f5e1def0123e97bc0",
            "createdAt": "2017-02-28T14:39:14.588Z",
            "tags": [
              "hiboux"
@@ -396,7 +396,7 @@ module.exports = router;
 /**
  * @apiDefine IssueNotFoundError
  *
- * @apiError {Object} 404/NotFound Aucun problème n'a été trouvé avec l'ID correspond à l'URL
+ * @apiError {Object} 404/NotFound Aucun problème n a été trouvé avec l ID correspond à l URL
  *
  * @apiErrorExample {json} 404 Not Found
  *     HTTP/1.1 404 Not Found
@@ -414,23 +414,50 @@ module.exports = router;
  *     HTTP/1.1 422 Unprocessable Entity
  *     Content-Type: application/json
  *
- *     {
- *       "message": "Movie validation failed",
- *       "errors": {
- *         "title": {
- *           "kind": "minlength",
- *           "message": "Path `title` (`0`) is shorter than the minimum allowed length (3).",
- *           "name": "ValidatorError",
- *           "path": "title",
- *           "properties": {
- *             "message": "Path `{PATH}` (`{VALUE}`) is shorter than the minimum allowed length (3).",
- *             "minlength": 3,
- *             "path": "title",
- *             "type": "minlength",
- *             "value": "0"
- *           },
- *           "value": "0"
- *         }
- *       }
- *     }
+ {
+   "message": "Issue validation failed",
+   "errors": {
+     "createdBy": {
+       "message": "Path `createdBy` is required.",
+       "name": "ValidatorError",
+       "properties": {
+         "type": "required",
+         "message": "Path `{PATH}` is required.",
+         "path": "createdBy"
+       },
+       "kind": "required",
+       "path": "createdBy"
+     },
+     "title": {
+       "message": "Path `title` is required.",
+       "name": "ValidatorError",
+       "properties": {
+         "type": "required",
+         "message": "Path `{PATH}` is required.",
+         "path": "title"
+       },
+       "kind": "required",
+       "path": "title"
+     },
+     "status": {
+       "message": "`test` is not a valid enum value for path `status`.",
+       "name": "ValidatorError",
+       "properties": {
+         "enumValues": [
+           "new",
+           "inProgress",
+           "canceled",
+           "completed"
+         ],
+         "type": "enum",
+         "message": "`{VALUE}` is not a valid enum value for path `{PATH}`.",
+         "path": "status",
+         "value": "test"
+       },
+       "kind": "enum",
+       "path": "status",
+       "value": "test"
+     }
+   }
+ }
  */
