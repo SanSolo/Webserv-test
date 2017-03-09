@@ -242,7 +242,7 @@ router.patch('/:id', loadIssueFromParamsMiddleware, function(req, res, next) {
  * @apiName UpdateIssue
  * @apiGroup Probleme
  * @apiVersion 1.0.0
- * @apiDescription Remplace les données des problèmes (cette requête doit avec les paramètres complet et être valide)
+ * @apiDescription Remplace les données des problèmes (cette requête doit avec les paramètres complets et être valides)
  *
  * @apiUse IssueIdInUrlPath
  * @apiUse IssueInRequestBody

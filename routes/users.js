@@ -20,27 +20,27 @@ const Issue = require('../models/issue');
  *
  *
  * @apiExample Example
- *     GET /api/users?role=citizen&page=2&pageSize=50 HTTP/1.1
+ *     GET /users?role=citizen&page=2&pageSize=50 HTTP/1.1
  *
  * @apiSuccessExample 200 OK
  *     HTTP/1.1 200 OK
  *     Content-Type: application/json
- *     Link: &lt;https://evening-meadow-25867.herokuapp.com/api/users?page=1&pageSize=50&gt;; rel="first prev"
+ *     Link: &lt;https://evening-meadow-25867.herokuapp.com/users?page=1&pageSize=50&gt;; rel="first prev"
  *
  *     [
  *       {
  *        "id": "58b2926f5e1def0579e97bc0",
-          "firstName": "John",
-          "lastName": "Doe",
+ *        "firstName": "John",
+ *        "lastName": "Doe",
  *        "role": "citizen",
  *        "createdAt": "2017-01-01T14:31:87.000Z"
  *       },
  *       {
  *        "id": "58b58b9240e6e957f8f1a146",
  *        "firstName": "Jean",
-          "lastName": "Dujardin",
-*         "role": "citizen",
-*         "createdAt": "2017-02-04T10:27:65.000Z"
+ *        "lastName": "Dujardin",
+ *        "role": "citizen",
+ *        "createdAt": "2017-02-04T10:27:65.000Z"
  *       }
  *     ]
  */
@@ -193,26 +193,26 @@ router.get('/:id/createdIssues', loadIssuesFromUser, function(req, res, next){
   * @apiUse UsersValidationError
   *
   * @apiExample Example
-  *     POST /api/users HTTP/1.1
+  *     POST /users HTTP/1.1
   *     Content-Type: application/json
   *
   *     {
   *       "firstName": "John",
-          "lastName": "Doe",
+  *       "lastName": "Doe",
   *       "role": "citizen",
   *     }
   *
   * @apiSuccessExample 201 Created
   *     HTTP/1.1 201 Created
   *     Content-Type: application/json
-  *     Location: https://evening-meadow-25867.herokuapp.com/api/users/58b2926f5e1def0579e97bc0
+  *     Location: https://evening-meadow-25867.herokuapp.com/users/58b2926f5e1def0579e97bc0
   *
   *     {
-  *       "id": "58b2926f5e1def0579e97bc0",
-          "firstName": "John",
-          "lastName": "Doe",
-  *       "role": "citizen",
-  *       "createdAt": "2017-01-01T14:31:87.000Z"
+ *        "id": "58b2926f5e1def0579e97bc0",
+ *        "firstName": "John",
+ *        "lastName": "Doe",
+ *        "role": "citizen",
+ *        "createdAt": "2017-01-01T14:31:87.000Z"
   *     }
   */
 
@@ -236,7 +236,7 @@ router.post('/', function(req, res, next) {
  * @apiGroup Utilisateur
  * @apiVersion 1.0.0
  * @apiDescription Apporter une modification partielle sur les données utilisateurs (seuls les propriétés déjà existantes peuvent être modifiées).
- * Toutes les propriétés sont optionnels
+ * Toutes les propriétés sont optionnelles
  *
  * @apiUse UsersIdInUrlPath
  * @apiUse UsersInRequestBody
@@ -245,7 +245,7 @@ router.post('/', function(req, res, next) {
  * @apiUse UsersValidationError
  *
  * @apiExample Example
- *     PATCH /api/users/58b2926f5e1def0789e97bc0 HTTP/1.1
+ *     PATCH /users/58b2926f5e1def0789e97bc0 HTTP/1.1
  *     Content-Type: application/json
  *
  *     {
@@ -258,8 +258,8 @@ router.post('/', function(req, res, next) {
  *
  *     {
  *       "id": "58b2926f5e1def0579e97bc0",
-         "firstName": "Johnny",
-         "lastName": "Doe",
+ *       "firstName": "Johnny",
+ *       "lastName": "Doe",
  *       "role": "citizen",
  *       "createdAt": "2017-01-01T14:31:87.000Z"
  *     }
@@ -297,8 +297,8 @@ router.patch('/:id', loadUserFromParamsMiddleware, function(req, res, next) {
  *
  *     {
  *        "firstName": "Danny",
-          "lastName": "Mendes",
-          "role": "manager",
+ *        "lastName": "Mendes",
+ *        "role": "manager",
  *     }
  *
  * @apiSuccessExample 200 OK
@@ -306,11 +306,11 @@ router.patch('/:id', loadUserFromParamsMiddleware, function(req, res, next) {
  *     Content-Type: application/json
  *
  *     {
- *       "id": "58b2926f5e1def0579e97bc0",
-         "firstName": "Danny",
-         "lastName": "Mendes",
- *       "role": "manager",
- *       "createdAt": "2017-01-01T14:31:87.000Z"
+ *        "id": "58b2926f5e1def0579e97bc0",
+ *        "firstName": "Danny",
+ *        "lastName": "Mendes",
+ *        "role": "manager",
+ *        "createdAt": "2017-01-01T14:31:87.000Z"
  *     }
  */
 
