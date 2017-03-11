@@ -32,7 +32,7 @@ const issueSchema = new Schema({
     min: -180, // Minimum value
     max: 180 // Maximum value
   },
-  tags: [{ type: String, maxlength: 20 }, required:true], // Tableau de String, chaque item max 20 car.
+  tags: [{ type: String, maxlength: 20 , required:true}], // Tableau de String, chaque item max 20 car.
   createdBy: {
     type: mongoose.Schema.Types.ObjectId, // Lien avec le model User
     ref: 'User',
