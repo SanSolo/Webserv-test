@@ -6,26 +6,24 @@ const ObjectId = mongoose.Types.ObjectId;
 const User = require('../models/user');
 const Issue = require('../models/issue');
 
-
-/* GET specific User */
 /**
- * @api {get} /users/:id Liste des utilisateurs
+ * @api {get} /users Liste des utilisateurs
  * @apiName RetrieveUsers1
  * @apiGroup Utilisateur
  * @apiVersion 1.0.0
- * @apiDescription Affiche la liste des utilisateurs triée par nom de famille (par ordre alphabétique)
+ * @apiDescription Affiche la liste des utilisateurs triée par nom de famille (par ordre alphabétique). Affiche un décompte du nombre d'issues créées par user
  *
  * @apiUse UsersInResponseBody
 
  *
  *
  * @apiExample Example
- *     GET /users?role=citizen&page=2&pageSize=50 HTTP/1.1
+ *     GET /users
  *
  * @apiSuccessExample 200 OK
  *     HTTP/1.1 200 OK
  *     Content-Type: application/json
- *     Link: &lt;https://evening-meadow-25867.herokuapp.com/users?page=1&pageSize=50&gt;; rel="first prev"
+ *     Link: https://heigvd-webserv-2017-team-3.herokuapp.com/users
  *
  *     [
  *       {
@@ -33,7 +31,8 @@ const Issue = require('../models/issue');
  *        "firstName": "John",
  *        "lastName": "Doe",
  *        "role": "citizen",
- *        "createdAt": "2017-01-01T14:31:87.000Z"
+ *        "createdAt": "2017-01-01T14:31:87.000Z",
+ *        "createdIssuesCount": 2
  *       },
  *       {
  *        "id": "58b58b9240e6e957f8f1a146",
@@ -44,18 +43,12 @@ const Issue = require('../models/issue');
  *       }
  *     ]
  */
-
- /* GET users listing. */
- /*router.get('/', function(req, res, next) {
-   User.find().sort('lastName').exec(function(err, users) {
-      if (err) {
-        return next(err);
-      }
-      res.send(users);
-    });
- });*/
- /* GET users listing. */
+ /*
+ Liste tous les utilisateurs avec un compte du nombre d'issues créées.
+ Si aucune issues créée alors la propriété issuesCount reste vide
+ */
  router.get('/', function(req, res, next) {
+   // Recherche tous les utilisateurs ordrés par nom de famille
    User.find().sort('lastName').exec(function(err, users) {
       if (err) {
         return next(err);
@@ -63,14 +56,14 @@ const Issue = require('../models/issue');
       const usersIds = users.map(user => user._id);
       Issue.aggregate([
       {
-        $match: { // Select movies directed by the people we are interested in
+        $match: { // Sélectionne les issues créées par les users qui nous intéressent
           createdBy: { $in: usersIds }
         }
       },
       {
-        $group: { // Group the documents by director ID
+        $group: { // Groupe les documents par ID de user
             _id: '$createdBy',
-            issuesCount: { // Count the number of movies for that ID
+            issuesCount: { // Compte le nombre d'issues créées pour cet ID de user
               $sum: 1
             }
         }
@@ -79,17 +72,17 @@ const Issue = require('../models/issue');
         if (err) {
           return next(err);
         }
-        // Convert the Person documents to JSON
+        // Convetit les documents User en JSON
         const userJson = users.map(user => user.toJSON());
         console.log(userJson);
 
-        // For each result...
+        // Pour chaque résultat...
         results.forEach(function(result) {
-          // Get the director ID (that was used to $group)...
+          // Prend l'id User (Qui était utilisé pour $group)
           const resultId = result._id.toString();
-          // Find the corresponding person...
+          // Trouve le User correspondant...
           const correspondingPerson = userJson.find(user => user._id == resultId);
-          // And attach the new property
+          // Et attache la nouvelle propriété
           correspondingPerson.createdIssuesCount = result.issuesCount;
         });
         // Send the enriched response
@@ -116,7 +109,7 @@ const Issue = require('../models/issue');
   * @apiSuccessExample 200 OK
   *     HTTP/1.1 200 OK
   *     Content-Type: application/json
-  *
+  *     Link: https://heigvd-webserv-2017-team-3.herokuapp.com/users/58b2926f5e1def0123e97bc0
   *     {
   *       "id": "58b2926f5e1def0123e97bc0",
   *       "firstName": "John",
@@ -132,7 +125,7 @@ router.get('/:id', loadUserFromParamsMiddleware, function(req, res, next){
 });
 
 /**
- * @api {get} /users/:id Renvoi les problèmes créés par un utilisateur
+ * @api {get} /users/:id/createdIssues Renvoi les problèmes (issues) créés par un utilisateur
  * @apiName RetrieveIssuesUsers
  * @apiGroup Utilisateur
  * @apiVersion 1.0.0
@@ -143,7 +136,7 @@ router.get('/:id', loadUserFromParamsMiddleware, function(req, res, next){
  * @apiUse UsersNotFoundError
  *
  * @apiExample Example
- *     GET /issues?user=58b2926f5e1def0123e97bc0&page=2&pageSize=50 HTTP/1.1
+ *     GET /users/58b2926f5e1def0789e5678/createdIssues HTTP/1.1
  *
  * @apiSuccessExample 200 OK
  *     HTTP/1.1 200 OK
@@ -151,30 +144,23 @@ router.get('/:id', loadUserFromParamsMiddleware, function(req, res, next){
  *
  *     [
  *     {
-         "id": "58b2926f5e1def0789e5678",
-         "status":"new",
-         "description": "essai 2",
-         "imageUrl": "http://hvdseigneuries.com/wp-content/uploads/2009/02/trouverchatonrect-fb-56e15ff28c6fc.jpg",
-         "latitude": "-30",
-         "longitude": "150",
-         "tags": "chaton"
-         "createdAt": "2017-02-28T14:39:14.588Z",
-         "createdBy": "users/58b2926f5e1def0123e97bc0"
- *     },
-         "id": "58b2926f5e1def0789e97281",
-         "status":"new",
-         "description": "Dupo",
-         "imageUrl": "http://hvdseigneuries.com/wp-content/uploads/2009/02/trouverchatonrect-fb-56e15ff28c6fc.jpg",
-         "latitude": "-10",
-         "longitude": "10",
-         "tags": "hiboux"
-         "createdAt": "2017-02-28T14:39:14.588Z",
-         "createdBy": "users/58b2926f5e1def0123e97bc0"
-        *     }
-
+ *       "id": "58b2926f5e1def0789e5678",
+ *       "title": "Poubelles renversées",
+ *       "description": "Ordures sur la route",
+ *       "latitude": 48.517,
+ *       "longitude": 12.628,
+ *       "createdBy": "58b96d537690d41bff3b7ff3",
+ *       "__v": 0,
+ *       "createdAt": "2017-03-03T13:56:29.164Z",
+ *       "tags": [
+ *          "poubelles",
+ *          "sale",
+ *          "moche"
+ *        ],
+ *        "status":"new",
+ *     }
  *     ]
  */
-
 
 /* Retourne les Issues créées par un User spécifique */
 router.get('/:id/createdIssues', loadIssuesFromUser, function(req, res, next){
@@ -182,7 +168,7 @@ router.get('/:id/createdIssues', loadIssuesFromUser, function(req, res, next){
 });
 
  /**
-  * @api {post} /users/:id Création de l'utilisateur
+  * @api {post} /users Création de l'utilisateur
   * @apiName CreateUser
   * @apiGroup Utilisateur
   * @apiVersion 1.0.0
@@ -205,7 +191,7 @@ router.get('/:id/createdIssues', loadIssuesFromUser, function(req, res, next){
   * @apiSuccessExample 201 Created
   *     HTTP/1.1 201 Created
   *     Content-Type: application/json
-  *     Location: https://evening-meadow-25867.herokuapp.com/users/58b2926f5e1def0579e97bc0
+  *     Location: https://heigvd-webserv-2017-team-3.herokuapp.com/users
   *
   *     {
  *        "id": "58b2926f5e1def0579e97bc0",
@@ -225,17 +211,16 @@ router.post('/', function(req, res, next) {
     }
     console.log(savedUser);
 
-
     res.send(savedUser);
   });
 });
 
 /**
- * @api {patch} /users/:id Apporter une modification partielle sur les données utilisateurs
+ * @api {patch} /users/:id Apporter une modification partielle sur un utilisateur
  * @apiName PartiallyUpdateUser
  * @apiGroup Utilisateur
  * @apiVersion 1.0.0
- * @apiDescription Apporter une modification partielle sur les données utilisateurs (seuls les propriétés déjà existantes peuvent être modifiées).
+ * @apiDescription Apporter une modification partielle sur les données d'un utilisateur (seuls les propriétés déjà existantes peuvent être modifiées).
  * Toutes les propriétés sont optionnelles
  *
  * @apiUse UsersIdInUrlPath
@@ -279,11 +264,11 @@ router.patch('/:id', loadUserFromParamsMiddleware, function(req, res, next) {
 });
 
 /**
- * @api {put} /users/:id Mettre à jour les données utilisateur
+ * @api {put} /users/:id Mettre à jour les données d'un utilisateur
  * @apiName UpdateUser
  * @apiGroup Utilisateur
  * @apiVersion 1.0.0
- * @apiDescription Remplace les données des personnes (Les données de l'utilisateur doivent être complètes et valides).
+ * @apiDescription Remplace les données d'un utilisateur (Les données de l'utilisateur doivent être complètes et valides).
  *
  * @apiUse UsersIdInUrlPath
  * @apiUse UsersInRequestBody
@@ -361,22 +346,6 @@ router.put('/:id', loadUserFromParamsMiddleware, function(req, res, next) {
    * Renvoi une erreur 404 Not Found, si l'ID n'est pas valide ou si l'utilisateur n'existe pas.
    */
 
-
-/*router.delete('/:id', loadUserFromParamsMiddleware, function(req, res, next) {
-    req.user.remove(function(err) {
-      if (err) {
-        return next(err);
-      }
-
-      res.sendStatus(204);
-    });
-  });*/
-
-  /**
-   * Middleware qui charge les utilisateurs correspond à l'ID dans l'URL.
-   * Renvoi une erreur 404 Not Found, si l'ID n'est pas valide ou si l'utilisateur n'existe pas.
-   */
-
 function loadUserFromParamsMiddleware(req, res, next) {
 
   const userId = req.params.id;
@@ -395,7 +364,9 @@ function loadUserFromParamsMiddleware(req, res, next) {
     next();
   });
 }
-
+/**
+* Middleware qui charge les isssues d'un User dont l'id est fourni dans l'URL
+*/
 function loadIssuesFromUser (req, res, next) {
   const userId = req.params.id;
   if (!ObjectId.isValid(userId)) {
@@ -434,11 +405,11 @@ function userNotFound(res, userId) {
 
 /**
  * @apiDefine UsersInResponseBody
- * @apiSuccess (Response body) {String} [id] L'identifiant, qui est unique, définit un utilisateur.
+ * @apiSuccess (Response body) {String} id L'identifiant, qui est unique, définit un utilisateur.
  * @apiSuccess (Response body) {String} firstName Le prénom de l'utilisateur
  * @apiSuccess (Response body) {String} lastName Le nom de famille de l'utilisateur
  * @apiSuccess (Response body) {String} role Définit le rôle de l'utilisateur
- * @apiSuccess (Response body) {Date} [createdAt] La date de création du compte utilisateur (ajout automatique)
+ * @apiSuccess (Response body) {Date} createdAt La date de création du compte utilisateur (ajout automatique)
 
 
  */

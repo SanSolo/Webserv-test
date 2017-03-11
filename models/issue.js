@@ -3,9 +3,9 @@ const Schema = mongoose.Schema;
 // Define the schema for issues
 const issueSchema = new Schema({
   title:{
-    type: String,
-    required: true,
-    maxlength: 20
+    type: String,    //Type valiation (String)
+    required: true, // Obligatoire
+    maxlength: 20  // Taille maximale (20 car.)
   },
   status:{
     type: String, // Type de validation
@@ -32,23 +32,23 @@ const issueSchema = new Schema({
     min: -180, // Minimum value
     max: 180 // Maximum value
   },
-  tags: [{ type: String, maxlength: 20 }],
+  tags: [{ type: String, maxlength: 20 }, required:true], // Tableau de String, chaque item max 20 car.
   createdBy: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId, // Lien avec le model User
     ref: 'User',
     required: true
   },
-  createdAt: {
+  createdAt: { // Date + heure de création
     type: Date,
     default: Date.now
   },
-  updatedAt: {
+  updatedAt: { // Date + heure de mise à jour
     type: Date,
   },
-  updatedBy: {
+  updatedBy: { // Permet de connaître la dernière personne ayant mis à jour l'issue
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
   }
 });
-// Create the model from the schema and export it
+// Crée le model à partir du schéma and l'exporte
 module.exports = mongoose.model('Issue', issueSchema);

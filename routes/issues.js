@@ -7,7 +7,6 @@ const ObjectId = mongoose.Types.ObjectId;
 const Issue = require('../models/issue');
 const User = require('../models/user');
 
-/* GET issues listing. */
 
 //début commentaire
 /**
@@ -16,20 +15,21 @@ const User = require('../models/user');
  * @apiGroup Probleme
  * @apiVersion 1.0.0
  * @apiDescription Renvoi une liste de problèmes triée par date de création (de la plus vieille à la récente pour traiter les vieux problèmes en premier)
- *
+ * Permet également de paginer la liste
  * @apiUse IssueInResponseBody
- *
+ * @apiParam (URL query parameters) {String} [status] Sélectionne seulement les issues ayant le status spécifié
  * @apiExample Example
- *     GET /issues?user=58b2926f5e1def0123e97bc0&page=2&pageSize=50 HTTP/1.1
+ *     GET /issues?status=new
  *
  * @apiSuccessExample 200 OK
  *     HTTP/1.1 200 OK
  *     Content-Type: application/json
- *     Link: &lt;https://evening-meadow-25867.herokuapp.com/api/issues?page=1&pageSize=50&gt;; rel="first prev"
+ *     Link: &lt;https://heigvd-webserv-2017-team-3.herokuapp.com/issues?page=1&pageSize=50&gt;; rel="first prev"
  *
  *     [
  *     {
          "id": "58b2926f5e1def0789e5678",
+         "title": "test",
          "status":"new",
          "description": "essai 2",
          "imageUrl": "http://hvdseigneuries.com/wp-content/uploads/2009/02/trouverchatonrect-fb-56e15ff28c6fc.jpg",
@@ -40,6 +40,7 @@ const User = require('../models/user');
          "createdBy": "users/58b2926f5e1def0123e97bc0"
  *     },
          "id": "58b2926f5e1def0789e97281",
+         "title": "essai",
          "status":"new",
          "description": "Dupo",
          "imageUrl": "http://hvdseigneuries.com/wp-content/uploads/2009/02/trouverchatonrect-fb-56e15ff28c6fc.jpg",
@@ -139,6 +140,7 @@ router.get('/:id', loadIssueFromParamsMiddleware, function(req, res, next){
  *     Content-Type: application/json
  *
  *     {
+         "title":"test",
 	       "status":"new",
 	       "description": "Dupo",
 	       "imageUrl": "http://hvdseigneuries.com/wp-content/uploads/2009/02/trouverchatonrect-fb-56e15ff28c6fc.jpg",
@@ -150,11 +152,12 @@ router.get('/:id', loadIssueFromParamsMiddleware, function(req, res, next){
  * @apiSuccessExample 201 Created
  *     HTTP/1.1 201 Created
  *     Content-Type: application/json
- *     Location: https://evening-meadow-25867.herokuapp.com/api/issues/58b2926f5e1def0789e97281
+ *     Location: https://heigvd-webserv-2017-team-3.herokuapp.com/issues
  *
  *     {
 
          "__v": 0,
+         "title": "essai",
          "status": "new",
          "description": "Dupo",
          "imageUrl": "http://hvdseigneuries.com/wp-content/uploads/2009/02/trouverchatonrect-fb-56e15ff28c6fc.jpg",
@@ -210,6 +213,7 @@ router.post('/', function(req, res, next) {
  *
  *     {
          "__v": 0,
+         "title": "test",
          "status": "new",
          "description": "description de",
          "imageUrl": "citizen",
@@ -255,6 +259,7 @@ router.patch('/:id', loadIssueFromParamsMiddleware, function(req, res, next) {
  *     Content-Type: application/json
  *
  *     {
+           "title": "hola",
            "imageUrl": "http://i.skyrock.net/8034/92018034/pics/3238631469_1_3_x5cYkxeV.jpg",
            "latitude": 12,
            "longitude": 150,
@@ -265,6 +270,7 @@ router.patch('/:id', loadIssueFromParamsMiddleware, function(req, res, next) {
  *     Content-Type: application/json
  *
  *     {
+           "title": "hola",
            "__v": 0,
            "status": "new",
            "description": "description de",
@@ -372,6 +378,7 @@ module.exports = router;
 
 /**
  * @apiDefine IssueInRequestBody
+ * @apiParam (Request body) {String} title Le titre du problème
  * @apiParam (Request body) {String="new","inProgress", "canceled", "completed"} status Le statut du problème (ne peut être qu'une de ces quatres valeurs)
  * @apiParam (Request body) {Number{-90..90}} latitude L'atitude de la location du problème
  * @apiParam (Request body) {Number{-180..180}} longitude La longitude de la location du problème
@@ -379,15 +386,16 @@ module.exports = router;
 
 /**
  * @apiDefine IssueInResponseBody
- * @apiSuccess (Response body) {String} [id] L'identifiant, qui est unique, définit un problème
+ * @apiSucces (Response Body) {String} title Le titre de l'issue
+ * @apiSuccess (Response body) {String} id L'identifiant, qui est unique, définit un problème
  * @apiSuccess(Response body) {String} status Le statut du problème (ne peut être qu'une de ces quatres valeurs)
  * @apiSuccess (Response body) {String} [description] Une description est demandée pour décrire le problème
  * @apiSuccess(Response body) {String} [imageUrl] L'URL d'une photo du problème
  * @apiSuccess (Response body) {Number} latitude L'atitude de la location du problème
  * @apiSuccess (Response body) {Number} longitude La longitude de la location du problème
- * @apiSuccess (Response body) {String} [tags] Les mots clés, afin de trouver plus facilement le type de problème
- * @apiSuccess (Response body) {String} [createdBy] La personne qui a créé le problème
- * @apiSuccess (Response body) {Date} [createdAt] La date où le problème a été identifié
+ * @apiSuccess (Response body) {String} tags Les mots clés, afin de trouver plus facilement le type de problème
+ * @apiSuccess (Response body) {String} createdBy La personne qui a créé le problème
+ * @apiSuccess (Response body) {Date} createdAt La date où le problème a été identifié
  * @apiSuccess (Response body) {Date} [updatedAt] La date de modification
  * @apiSuccess (Response body) {String} [updatedBy] La personne qui a modifié le statut
 
